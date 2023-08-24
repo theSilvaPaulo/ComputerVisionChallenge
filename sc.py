@@ -24,17 +24,15 @@ def saveScreenshot(url,windowSize,scName):
 
 def getCoordinates(scName,factor,invert):
     
-    # Load the small image with transparency
+    #load the small image with transparency
     logo = cv2.imread("logo.png", cv2.IMREAD_UNCHANGED)
 
-    # Check if the small image was loaded successfully
-
-    # Create a mask to identify transparent areas
+    #create a mask to identify transparent areas
     mascara = logo[:, :, 3] == 0
 
     cor_fundo = [255, 255, 255]  # White
 
-    # Apply the background color only to transparent areas
+    #apply the background color only to transparent areas
     logo[mascara, :3] = cor_fundo
 
     resized_logo = cv2.resize(logo, (int(logo.shape[1] * factor), int(logo.shape[0] * factor)))
@@ -44,19 +42,18 @@ def getCoordinates(scName,factor,invert):
 
     screenshot = cv2.imread(scName, cv2.IMREAD_UNCHANGED)
 
-    # Encontrar a logo na screenshot
+    # find logo
     result = cv2.matchTemplate(screenshot, resized_logo, cv2.TM_CCOEFF_NORMED)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
 
-    # Obter as coordenadas do canto superior esquerdo e inferior direito da logo encontrada
+    # getting positions of the found logo
     top_left = max_loc
     h, w = resized_logo.shape[:2]
     bottom_right = (top_left[0] + w, top_left[1] + h)
 
-    # Desenhar um retângulo ao redor da logo encontrada na screenshot
+    # drawing
     cv2.rectangle(screenshot, top_left, bottom_right, (0, 255, 0), 2)
 
-    # Mostrar a screenshot com a logo destacada
     cv2.imshow('Resultado', screenshot)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
